@@ -1,5 +1,5 @@
 const ORDERS_API_URL = window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')
-  ? 'http://192.168.100.3:5004/api/orders'
+  ? 'http://192.168.100.10:5004/api/orders'
   : 'http://orders-api:5004/api/orders';
 
 document.addEventListener('DOMContentLoaded', function () {

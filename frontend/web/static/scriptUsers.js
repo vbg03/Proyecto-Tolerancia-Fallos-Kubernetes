@@ -1,9 +1,9 @@
 const USERS_API_URL = window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')
-  ? 'http://192.168.100.3:5002'
+  ? 'http://192.168.100.10:5002'
   : 'http://users-api:5002';
 
 function getUsers() {
-    fetch('${USERS_API_URL}/api/users')
+    fetch(`${USERS_API_URL}/api/users`)  // ← BACKTICKS aquí
         .then(response => response.json())
         .then(data => {
             // Handle data
@@ -38,7 +38,6 @@ function getUsers() {
                 // Edit link
                 var editLink = document.createElement('a');
                 editLink.href = `/editUser/${user.id}`;
-                //editLink.href = `edit.html?id=${user.id}`;
                 editLink.textContent = 'Edit';
                 editLink.className = 'btn btn-primary mr-2';
                 actionsCell.appendChild(editLink);
@@ -69,7 +68,7 @@ function createUser() {
         password: document.getElementById('password').value
     };
 
-    fetch('${USERS_API_URL}/api/users', {
+    fetch(`${USERS_API_URL}/api/users`, {  // ← BACKTICKS aquí
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -101,7 +100,7 @@ function updateUser() {
         password: document.getElementById('password').value
     };
 
-    fetch(`${USERS_API_URL}/api/users/${userId}`, {
+    fetch(`${USERS_API_URL}/api/users/${userId}`, {  // ← BACKTICKS aquí
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -128,7 +127,7 @@ function updateUser() {
 function deleteUser(userId) {
     console.log('Deleting user with ID:', userId);
     if (confirm('Are you sure you want to delete this user?')) {
-        fetch(`${USERS_API_URL}/api/users/${userId}`, {
+        fetch(`${USERS_API_URL}/api/users/${userId}`, {  // ← BACKTICKS aquí
             method: 'DELETE',
         })
             .then(response => {
@@ -154,7 +153,7 @@ function handleLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    fetch('${USERS_API_URL}/api/login', {
+    fetch(`${USERS_API_URL}/api/login`, {  // ← BACKTICKS aquí
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -169,9 +168,14 @@ function handleLogin() {
             return response.json();
         })
         .then(data => {
-            if (data.user) {
-                sessionStorage.setItem('currentUser', JSON.stringify(data.user));
-            }
+            // Guardar info del usuario en sessionStorage
+            const user = {
+                id: data.user_id || 1,
+                name: username,
+                email: data.email || `${username}@example.com`
+            };
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+            
             // Redirigir al dashboard
             window.location.href = '/dashboard';
         })
@@ -182,12 +186,13 @@ function handleLogin() {
 }
 
 function handleLogout() {
-    fetch('${USERS_API_URL}/api/logout', {
+    fetch(`${USERS_API_URL}/api/logout`, {  // ← BACKTICKS aquí
         method: 'POST',
         credentials: 'include'
     })
         .then(response => {
             if (response.ok) {
+                sessionStorage.clear();
                 window.location.href = '/'; // Redirigir a la página de login
             } else {
                 throw new Error('Logout failed');
