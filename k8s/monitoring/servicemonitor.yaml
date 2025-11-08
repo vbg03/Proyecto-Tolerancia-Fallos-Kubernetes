@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-api-metrics
+  labels:
+    app: users-api
+spec:
+  selector:
+    app: users-api
+  ports:
+  - name: metrics
+    port: 5002
+    targetPort: 5002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: products-api-metrics
+  labels:
+    app: products-api
+spec:
+  selector:
+    app: products-api
+  ports:
+  - name: metrics
+    port: 5003
+    targetPort: 5003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api-metrics
+  labels:
+    app: orders-api
+spec:
+  selector:
+    app: orders-api
+  ports:
+  - name: metrics
+    port: 5004
+    targetPort: 5004
+---
+# ConfigMap para alertas de Prometheus
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alerts
+  namespace: istio-system
+data:
+  alerts.yaml: |
+    groups:
+    - name: microservices_alerts
+      interval: 30s
+      rules:
+      # Alerta por alta tasa de errores 5xx
+      - alert: HighErrorRate
+        expr: |
+          rate(istio_requests_total{response_code=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Alto número de errores 5xx en {{ $labels.destination_service_name }}"
+          description: "El servicio {{ $labels.destination_service_name }} tiene una tasa de errores de {{ $value }} req/s"
+      
+      # Alerta por pod no disponible
+      - alert: PodDown
+        expr: |
+          up{job="kubernetes-pods"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Pod {{ $labels.pod }} está caído"
+          description: "El pod {{ $labels.pod }} en el namespace {{ $labels.namespace }} no está respondiendo"
+      
+      # Alerta por alto uso de CPU
+      - alert: HighCPUUsage
+        expr: |
+          rate(container_cpu_usage_seconds_total{namespace="default"}[5m]) > 0.8
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Alto uso de CPU en {{ $labels.pod }}"
+          description: "El pod {{ $labels.pod }} está usando más del 80% de CPU"
+      
+      # Alerta por alta latencia
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99, 
+            rate(istio_request_duration_milliseconds_bucket[5m])
+          ) > 1000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Alta latencia en {{ $labels.destination_service_name }}"
+          description: "El p99 de latencia es {{ $value }}ms en {{ $labels.destination_service_name }}"
+      
+      # Alerta por circuit breaker activado
+      - alert: CircuitBreakerOpen
+        expr: |
+          increase(istio_requests_total{response_flags=~".*UO.*"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Circuit breaker activado en {{ $labels.destination_service_name }}"
+          description: "El circuit breaker se ha activado para {{ $labels.destination_service_name }}"
