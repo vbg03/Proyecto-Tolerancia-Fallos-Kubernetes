@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: users-api-retry
+spec:
+  hosts:
+  - users-api
+  http:
+  - route:
+    - destination:
+        host: users-api
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+      retryOn: 5xx,reset,connect-failure,refused-stream

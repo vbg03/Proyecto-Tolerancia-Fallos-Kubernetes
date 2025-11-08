@@ -1,0 +1,11 @@
+# Servicio del Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      # CAMBIO AQUÍ: Mapeamos al puerto 5000 del contenedor Flask
+      - "8080:5000"
+    # Es buena práctica pasar las URLs de las APIs como variables de entorno
+    # para que tu frontend sepa cómo llamarlas.
+    environment:
+      USERS_API_URL: http://users-api:5000
+      PRODUCTS_API_URL: http://products-api:5000

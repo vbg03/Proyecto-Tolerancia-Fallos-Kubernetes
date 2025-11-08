@@ -1,0 +1,88 @@
+services:
+  consul-server:
+    image: hashicorp/consul:latest
+    container_name: consul-server
+    ports:
+      - "8500:8500"
+    volumes:
+      - consul_data:/consul/data
+    command: "agent -server -bootstrap-expect=1 -ui -client=0.0.0.0"
+
+  consul-client:
+    image: hashicorp/consul:latest
+    container_name: consul-client
+    command: "agent -join=consul-server -client=0.0.0.0"
+    depends_on:
+      - consul-server
+
+  database:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3306:3306"  
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: myflaskapp
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+
+  users-api:
+    build: ./microUsers
+    ports:
+      - "5002:5002"  
+    environment:
+      DATABASE_HOST: database
+      DATABASE_USER: root
+      DATABASE_PASSWORD: rootpassword
+      DATABASE_NAME: myflaskapp
+    depends_on:
+      - database
+      - consul-client
+    restart: unless-stopped 
+
+  products-api:
+    build: ./microProductos
+    ports:
+      - "5003:5003"  
+    environment:
+      DATABASE_HOST: database
+      DATABASE_USER: root
+      DATABASE_PASSWORD: rootpassword
+      DATABASE_NAME: myflaskapp
+    depends_on:
+      - database
+      - consul-client
+    restart: unless-stopped 
+
+  orders-api:
+    build: ./microOrders
+    ports:
+      - "5004:5004"
+    environment:
+      DATABASE_HOST: database
+      DATABASE_USER: root
+      DATABASE_PASSWORD: rootpassword
+      DATABASE_NAME: myflaskapp
+    depends_on:
+      - database
+      - consul-client
+    restart: unless-stopped  
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:5001" 
+    environment:
+      USERS_API_URL: http://users-api:5002
+      PRODUCTS_API_URL: http://products-api:5003
+      ORDERS_API_URL: http://orders-api:5004
+    depends_on:
+      - users-api
+      - products-api
+      - orders-api
+    restart: unless-stopped 
+
+volumes:
+  db_data:
+  consul_data:
