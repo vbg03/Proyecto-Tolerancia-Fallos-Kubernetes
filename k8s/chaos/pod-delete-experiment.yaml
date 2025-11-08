@@ -1,0 +1,113 @@
+# Experimento 1: Eliminar pods aleatoriamente
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: users-api-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: default
+    applabel: 'app=users-api'
+    appkind: deployment
+  engineState: 'active'
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: pod-delete
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: '30'
+            - name: CHAOS_INTERVAL
+              value: '10'
+            - name: FORCE
+              value: 'false'
+---
+# Experimento 2: Latencia de red
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: network-latency-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: default
+    applabel: 'app=products-api'
+    appkind: deployment
+  engineState: 'active'
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: pod-network-latency
+      spec:
+        components:
+          env:
+            - name: TARGET_CONTAINER
+              value: 'products-api'
+            - name: NETWORK_INTERFACE
+              value: 'eth0'
+            - name: NETWORK_LATENCY
+              value: '2000' # 2 segundos de latencia
+            - name: TOTAL_CHAOS_DURATION
+              value: '60'
+---
+# Experimento 3: Pérdida de paquetes
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: network-loss-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: default
+    applabel: 'app=orders-api'
+    appkind: deployment
+  engineState: 'active'
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: pod-network-loss
+      spec:
+        components:
+          env:
+            - name: TARGET_CONTAINER
+              value: 'orders-api'
+            - name: NETWORK_INTERFACE
+              value: 'eth0'
+            - name: NETWORK_PACKET_LOSS_PERCENTAGE
+              value: '50' # 50% de pérdida de paquetes
+            - name: TOTAL_CHAOS_DURATION
+              value: '60'
+---
+# ServiceAccount para Litmus
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-admin
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: litmus-admin
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "events", "services"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["litmuschaos.io"]
+    resources: ["chaosengines", "chaosexperiments", "chaosresults"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: litmus-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: litmus-admin
+subjects:
+  - kind: ServiceAccount
+    name: litmus-admin
+    namespace: default
