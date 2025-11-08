@@ -23,8 +23,9 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
 echo "=== Instalando Helm ==="
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-echo "=== Iniciando Minikube ==="
-sudo -u vagrant minikube start --driver=docker --memory=3072 --cpus=2
+echo "=== Iniciando Minikube con más recursos ==="
+# Usar más memoria y CPUs para soportar Istio
+sudo -u vagrant minikube start --driver=docker --memory=5120 --cpus=3
 
 echo "=== Habilitando addons de Minikube ==="
 sudo -u vagrant minikube addons enable metrics-server

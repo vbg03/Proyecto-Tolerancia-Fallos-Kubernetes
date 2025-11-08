@@ -1,5 +1,9 @@
+const USERS_API_URL = window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')
+  ? 'http://192.168.100.3:5002'
+  : 'http://users-api:5002';
+
 function getUsers() {
-    fetch('http://192.168.100.3:5002/api/users')
+    fetch('${USERS_API_URL}/api/users')
         .then(response => response.json())
         .then(data => {
             // Handle data
@@ -34,7 +38,7 @@ function getUsers() {
                 // Edit link
                 var editLink = document.createElement('a');
                 editLink.href = `/editUser/${user.id}`;
-	        //editLink.href = `edit.html?id=${user.id}`;
+                //editLink.href = `edit.html?id=${user.id}`;
                 editLink.textContent = 'Edit';
                 editLink.className = 'btn btn-primary mr-2';
                 actionsCell.appendChild(editLink);
@@ -44,7 +48,7 @@ function getUsers() {
                 deleteLink.href = '#';
                 deleteLink.textContent = 'Delete';
                 deleteLink.className = 'btn btn-danger';
-                deleteLink.addEventListener('click', function() {
+                deleteLink.addEventListener('click', function () {
                     deleteUser(user.id);
                 });
                 actionsCell.appendChild(deleteLink);
@@ -65,27 +69,27 @@ function createUser() {
         password: document.getElementById('password').value
     };
 
-    fetch('http://192.168.100.3:5002/api/users', {
+    fetch('${USERS_API_URL}/api/users', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Handle success
-        console.log(data);
-    })
-    .catch(error => {
-        // Handle error
-        console.error('Error:', error);
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle success
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle error
+            console.error('Error:', error);
+        });
 }
 
 function updateUser() {
@@ -97,36 +101,13 @@ function updateUser() {
         password: document.getElementById('password').value
     };
 
-    fetch(`http://192.168.100.3:5002/api/users/${userId}`, {
+    fetch(`${USERS_API_URL}/api/users/${userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Handle success
-        console.log(data);
-        // Optionally, redirect to another page or show a success message
-    })
-    .catch(error => {
-        // Handle error
-        console.error('Error:', error);
-    });
-}
-
-function deleteUser(userId) {
-    console.log('Deleting user with ID:', userId);
-    if (confirm('Are you sure you want to delete this user?')) {
-        fetch(`http://192.168.100.3:5002/api/users/${userId}`, {
-            method: 'DELETE',
-        })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -135,59 +116,85 @@ function deleteUser(userId) {
         })
         .then(data => {
             // Handle success
-            console.log('User deleted successfully:', data);
-            // Reload the user list
-            getUsers();
+            console.log(data);
+            // Optionally, redirect to another page or show a success message
         })
         .catch(error => {
             // Handle error
             console.error('Error:', error);
         });
+}
+
+function deleteUser(userId) {
+    console.log('Deleting user with ID:', userId);
+    if (confirm('Are you sure you want to delete this user?')) {
+        fetch(`${USERS_API_URL}/api/users/${userId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle success
+                console.log('User deleted successfully:', data);
+                // Reload the user list
+                getUsers();
+            })
+            .catch(error => {
+                // Handle error
+                console.error('Error:', error);
+            });
     }
 }
 
 function handleLogin() {
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-  fetch('http://192.168.100.3:5002/api/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ username, password }),
-    credentials: 'include'
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Invalid credentials');
-    }
-    return response.json();
-  })
-  .then(data=> {
-    // Redirigir a la página de productos después de un inicio de sesión exitoso
-    window.location.href = '/dashboard'; // <-- CAMBIO AQUÍ
-  })
-  .catch(error => {
-    console.error('Login error:', error);
-    alert('Invalid credentials');
-  });
+    fetch('${USERS_API_URL}/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Invalid credentials');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.user) {
+                sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+            }
+            // Redirigir al dashboard
+            window.location.href = '/dashboard';
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            alert('Invalid credentials');
+        });
 }
 
 function handleLogout() {
-  fetch('http://192.168.100.3:5002/api/logout', {
-    method: 'POST',
-    credentials: 'include'
-  })
-  .then(response => {
-    if (response.ok) {
-      window.location.href = '/'; // Redirigir a la página de login
-    } else {
-      throw new Error('Logout failed');
-    }
-  })
-  .catch(error => {
-    console.error('Logout error:', error);
-    alert('Failed to log out.');
-  });
+    fetch('${USERS_API_URL}/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/'; // Redirigir a la página de login
+            } else {
+                throw new Error('Logout failed');
+            }
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+            alert('Failed to log out.');
+        });
 }

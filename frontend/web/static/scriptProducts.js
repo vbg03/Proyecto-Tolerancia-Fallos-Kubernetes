@@ -1,5 +1,13 @@
-const API_URL = 'http://192.168.100.3:5003/api/products';
-const ORDERS_API_URL = 'http://192.168.100.3:5004/api/orders';
+// Detectar si estamos en Kubernetes o desarrollo local
+const PRODUCTS_API_URL = window.location.hostname === 'localhost' || window.location.hostname.includes('192.168') 
+  ? 'http://192.168.100.3:5003/api/products'
+  : 'http://products-api:5003/api/products';
+
+const ORDERS_API_URL = window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')
+  ? 'http://192.168.100.3:5004/api/orders'
+  : 'http://orders-api:5004/api/orders';
+
+const API_URL = PRODUCTS_API_URL;
 
 let currentCart = [];
 
@@ -138,7 +146,7 @@ function updateProduct() {
 
 function orderProducts() {
   const isDashboard = window.location.pathname.includes('/dashboard');
-  if (!isDashboard) return; 
+  if (!isDashboard) return;
 
   currentCart = [];
   const productRows = document.querySelectorAll('#product-list tbody tr');
@@ -245,8 +253,16 @@ function checkoutOrder() {
     return;
   }
 
+  const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+
+  if (!currentUser) {
+    alert('You are not logged in. Please log out and log in again.');
+    return;
+  }
+
   const orderData = {
-    user: { name: 'Test User', email: 'test@example.com' },
+    // Usamos los datos del usuario que inició sesión
+    user: { name: currentUser.name, email: currentUser.email },
     products: currentCart.map((p) => ({ id: p.id, quantity: p.quantity }))
   };
 
@@ -276,6 +292,6 @@ function checkoutOrder() {
 }
 
 function removeFromCart(index) {
-    currentCart.splice(index, 1);
-    updateCartView();
+  currentCart.splice(index, 1);
+  updateCartView();
 }

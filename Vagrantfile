@@ -13,14 +13,17 @@ Vagrant.configure("2") do |config|
     k8sServer.vm.network :private_network, ip: "192.168.100.10"
     k8sServer.vm.hostname = "k8sServer"
     
-    # Kubernetes necesita más recursos
+    # Kubernetes + Istio necesita más recursos
     k8sServer.vm.provider "virtualbox" do |vb|
-      vb.memory = "4096"  # 4GB RAM
-      vb.cpus = 2
+      vb.memory = "6144"  # 6GB RAM (aumentado)
+      vb.cpus = 4         # 4 CPUs (aumentado)
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
     
     # Script de provisión
     k8sServer.vm.provision "shell", path: "setup-k8s.sh"
   end
+  
   config.vm.boot_timeout = 600
 end
