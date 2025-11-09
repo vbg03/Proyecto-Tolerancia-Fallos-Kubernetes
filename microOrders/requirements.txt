@@ -3,3 +3,4 @@ mysql-connector-python
 Flask-SQLAlchemy
 flask-cors
 requests
+prometheus-flask-exporter

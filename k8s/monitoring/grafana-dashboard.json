@@ -1,0 +1,23 @@
+{
+  "dashboard": {
+    "title": "Microservicios Flask",
+    "panels": [
+      {
+        "title": "Requests por segundo",
+        "targets": [
+          {
+            "expr": "sum(rate(flask_http_request_total[5m])) by (app)"
+          }
+        ]
+      },
+      {
+        "title": "Latencia p95",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(flask_http_request_duration_seconds_bucket[5m]))"
+          }
+        ]
+      }
+    ]
+  }
+}
