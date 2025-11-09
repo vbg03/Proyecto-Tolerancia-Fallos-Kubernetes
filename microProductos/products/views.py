@@ -2,8 +2,6 @@ from flask import Flask
 from products.controllers.product_controller import product_controller
 from db.db import db
 from flask_cors import CORS
-import requests  # Para registro en Consul
-import time
 
 app = Flask(__name__)
 CORS(app)

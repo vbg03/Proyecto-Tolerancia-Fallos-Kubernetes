@@ -1,10 +1,7 @@
 from flask import Flask
-# Corregí la ruta de importación
 from orders.controllers.order_controller import order_controller 
 from db.db import db
 from flask_cors import CORS
-import time
-import requests
 
 app = Flask(__name__)
 CORS(app)

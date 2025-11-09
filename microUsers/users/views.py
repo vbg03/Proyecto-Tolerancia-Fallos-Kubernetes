@@ -2,8 +2,6 @@ from flask import Flask
 from users.controllers.user_controller import user_controller
 from db.db import db
 from flask_cors import CORS
-import time
-import requests
 
 app = Flask(__name__)
 app.secret_key = 'secret123'  # Clave secreta para la sesión
