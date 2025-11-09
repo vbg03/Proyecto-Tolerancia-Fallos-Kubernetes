@@ -13,12 +13,13 @@ Vagrant.configure("2") do |config|
     k8sServer.vm.network :private_network, ip: "192.168.100.10"
     k8sServer.vm.hostname = "k8sServer"
     
-    # Kubernetes + Istio necesita más recursos
+    # Configuración optimizada para i5-10300H con 16GB RAM
     k8sServer.vm.provider "virtualbox" do |vb|
-      vb.memory = "6144"  # 6GB RAM (aumentado)
-      vb.cpus = 4         # 4 CPUs (aumentado)
+      vb.memory = "8192"  # 8GB para la VM (deja 8GB para Windows)
+      vb.cpus = 4         # 4 CPUs (mitad de los threads)
       vb.customize ["modifyvm", :id, "--ioapic", "on"]
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      vb.customize ["modifyvm", :id, "--cpuexecutioncap", "80"]  # Límite del 80% para no saturar
     end
     
     # Script de provisión
