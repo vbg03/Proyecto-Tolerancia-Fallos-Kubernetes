@@ -1,104 +1,115 @@
+<div align="center">
+
 # 🚀 Proyecto de Tolerancia a Fallos en Kubernetes
 
-Sistema de microservicios con Flask desplegado en Kubernetes, implementando patrones de tolerancia a fallos como Circuit Breaker, Retry, Failover y Auto-scaling.
+💻 **Sistema de microservicios resiliente con Flask, Kubernetes e Istio**  
+Implementando patrones como **Circuit Breaker, Retry, Failover, Auto-Scaling** y **Chaos Engineering**  
+
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?logo=flask&logoColor=white)
+![Istio](https://img.shields.io/badge/Istio-466BB0?logo=istio&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
+
+</div>
+
+---
 
 ## 📋 Descripción del Proyecto
 
-Este proyecto implementa una aplicación distribuida de e-commerce con tres microservicios principales (Usuarios, Productos y Órdenes), un frontend web y una base de datos MySQL. Todo está orquestado con Kubernetes y configurado con patrones de alta disponibilidad y resiliencia.
+Este proyecto implementa una aplicación distribuida de **e-commerce** con tres microservicios principales:  
+🧍‍♂️ **Usuarios**, 📦 **Productos** y 🧾 **Órdenes**, más un **frontend web** y una **base de datos MySQL**.  
+Todo está orquestado con **Kubernetes** y configurado con patrones de **alta disponibilidad y resiliencia**.
 
-### 🏗️ Arquitectura
+---
+
+## 🏗️ Arquitectura
 
 ```
+
 ┌─────────────┐
 │   Frontend  │
-│  (Flask)    │
+│   (Flask)   │
 └──────┬──────┘
-       │
-   ┌───┴────────────────────┐
-   │                        │
+│
+┌───┴────────────────────┐
+│                        │
 ┌──▼─────────┐   ┌──────────▼──┐   ┌──────────────┐
 │ Users API  │   │ Products API│   │  Orders API  │
 │  (Flask)   │   │   (Flask)   │   │   (Flask)    │
 └─────┬──────┘   └──────┬──────┘   └──────┬───────┘
-      │                 │                  │
-      └─────────────────┴──────────────────┘
-                        │
-                 ┌──────▼──────┐
-                 │    MySQL    │
-                 │   Database  │
-                 └─────────────┘
-```
+│                 │                  │
+└─────────────────┴──────────────────┘
+│
+┌──────▼──────┐
+│    MySQL    │
+│   Database  │
+└─────────────┘
 
-### ✨ Características
+````
 
-- **Self-healing**: Kubernetes reinicia automáticamente pods fallidos
-- **Auto-scaling**: HPA escala pods según uso de CPU
-- **Circuit Breaker**: Previene cascadas de fallos con Istio
-- **Retry Policy**: Reintenta requests fallidos automáticamente
-- **Health Checks**: Liveness y Readiness probes
-- **Monitoreo**: Prometheus + Grafana + Kiali
-- **Chaos Engineering**: Scripts para simular fallos
+---
+
+## ✨ Características
+
+✅ **Self-healing** – Kubernetes reinicia automáticamente pods fallidos  
+⚙️ **Auto-scaling** – HPA escala pods según uso de CPU  
+🧱 **Circuit Breaker** – Previene cascadas de fallos con Istio  
+🔁 **Retry Policy** – Reintenta requests fallidos automáticamente  
+💓 **Health Checks** – Liveness y Readiness probes  
+📊 **Monitoreo** – Prometheus + Grafana + Kiali  
+💥 **Chaos Engineering** – Scripts para simular fallos  
 
 ---
 
 ## 🛠️ Requisitos Previos
 
-### Hardware Mínimo
-- **CPU**: 4 cores (Intel i5 o superior recomendado)
-- **RAM**: 16 GB (8 GB para la VM, 8 GB para el sistema host)
-- **Disco**: 20 GB libres
+### 💻 Hardware Mínimo
+| Recurso | Requisito |
+|----------|------------|
+| CPU | 4 cores (Intel i5 o superior) |
+| RAM | 16 GB (8 GB para VM, 8 GB para host) |
+| Disco | 20 GB libres |
 
-### Software Necesario
-- **VirtualBox** 6.1 o superior
-- **Vagrant** 2.2 o superior
-- **Git** (para clonar el repositorio)
+### 🧰 Software Necesario
+- **VirtualBox** ≥ 6.1  
+- **Vagrant** ≥ 2.2  
+- **Git**
 
 ---
 
-## 📦 Instalación y Configuración
+## ⚙️ Instalación y Configuración
 
-### Paso 1: Clonar el Repositorio
-
+### 🧩 Paso 1: Clonar el Repositorio
 ```bash
 git clone <url-del-repositorio>
 cd <nombre-del-proyecto>
-```
+````
 
-### Paso 2: Levantar la Máquina Virtual
+### 🧩 Paso 2: Levantar la Máquina Virtual
 
 ```bash
-# Iniciar la VM con Vagrant
 vagrant up
-
-# Esto hará:
-# - Crear una VM Ubuntu 22.04
-# - Instalar Docker, kubectl, Minikube y Helm
-# - Configurar Minikube con 7GB RAM y 3 CPUs
-# - Habilitar metrics-server e ingress
 ```
 
-⏱️ **Tiempo estimado**: 15-20 minutos (depende de tu conexión a internet)
+Esto creará una VM Ubuntu con Docker, kubectl, Minikube y Helm preconfigurados.
+⏱️ *Tiempo estimado: 15-20 minutos.*
 
-### Paso 3: Conectarse a la VM
+### 🧩 Paso 3: Conectarse a la VM
 
 ```bash
 vagrant ssh
 ```
 
-### Paso 4: Verificar la Instalación
+### 🧩 Paso 4: Verificar la Instalación
 
 ```bash
-# Verificar Minikube
 minikube status
-
-# Verificar kubectl
-kubectl version --client
-
-# Ver nodos
 kubectl get nodes
 ```
 
 Deberías ver algo como:
+
 ```
 NAME       STATUS   ROLES           AGE   VERSION
 minikube   Ready    control-plane   5m    v1.28.3
@@ -108,108 +119,63 @@ minikube   Ready    control-plane   5m    v1.28.3
 
 ## 🚀 Despliegue de la Aplicación
 
-### Paso 1: Construir las Imágenes Docker
+### 🧱 Construir las Imágenes Docker
 
 ```bash
-# Asegúrate de estar en el directorio del proyecto dentro de la VM
 cd /vagrant
-
-# Configurar Docker para usar el daemon de Minikube
 eval $(minikube docker-env)
-
-# Construir imágenes
 docker build -t users-api:latest ./microUsers
 docker build -t products-api:latest ./microProductos
 docker build -t orders-api:latest ./microOrders
 docker build -t frontend:latest ./frontend
 ```
 
-⏱️ **Tiempo estimado**: 5-10 minutos
-
-### Paso 2: Desplegar MySQL
+### 🗄️ Desplegar MySQL
 
 ```bash
 kubectl apply -f k8s/base/mysql-deployment.yaml
-
-# Esperar a que MySQL esté listo
 kubectl wait --for=condition=ready pod -l app=mysql --timeout=300s
 ```
 
-### Paso 3: Desplegar los Microservicios
+### 🧩 Desplegar los Microservicios
 
 ```bash
-# Desplegar todos los servicios
 kubectl apply -f k8s/base/users-deployment.yaml
 kubectl apply -f k8s/base/products-deployment.yaml
 kubectl apply -f k8s/base/orders-deployment.yaml
 kubectl apply -f k8s/base/frontend-deployment.yaml
-
-# Verificar que todos los pods estén corriendo
 kubectl get pods
 ```
 
-Deberías ver algo como:
+---
+
+## 🌐 Acceso a la Aplicación
+
+| Servicio        | URL                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------ |
+| 🖥️ Frontend    | [http://192.168.100.10:30080](http://192.168.100.10:30080)                           |
+| 👥 Users API    | [http://192.168.100.10:30002/api/users](http://192.168.100.10:30002/api/users)       |
+| 📦 Products API | [http://192.168.100.10:30003/api/products](http://192.168.100.10:30003/api/products) |
+| 🧾 Orders API   | [http://192.168.100.10:30004/api/orders](http://192.168.100.10:30004/api/orders)     |
+
+### 🔐 Credenciales de Prueba
+
 ```
-NAME                            READY   STATUS    RESTARTS   AGE
-mysql-xxx                       1/1     Running   0          2m
-users-api-xxx                   1/1     Running   0          1m
-products-api-xxx                1/1     Running   0          1m
-orders-api-xxx                  1/1     Running   0          1m
-frontend-xxx                    1/1     Running   0          1m
-```
-
-### Paso 4: Exponer los Servicios
-
-```bash
-# Aplicar servicios NodePort
-kubectl apply -f expose-all-services.sh
-
-# Ver los puertos asignados
-kubectl get svc
+Usuario: juan     Contraseña: 123
+Usuario: maria    Contraseña: 456
 ```
 
 ---
 
-## 🌐 Acceder a la Aplicación
-
-### Desde tu Navegador (Host)
-
-La aplicación estará disponible en:
-
-- **Frontend**: http://192.168.100.10:30080
-- **Users API**: http://192.168.100.10:30002/api/users
-- **Products API**: http://192.168.100.10:30003/api/products
-- **Orders API**: http://192.168.100.10:30004/api/orders
-
-### Credenciales de Prueba
-
-```
-Usuario: juan
-Contraseña: 123
-```
-
-O:
-```
-Usuario: maria
-Contraseña: 456
-```
-
----
-
-## 📊 Configurar Monitoreo (Opcional pero Recomendado)
+## 📊 Monitoreo y Observabilidad
 
 ### Instalar Istio
 
 ```bash
-# Descargar Istio
 curl -L https://istio.io/downloadIstio | sh -
 cd istio-*
 export PATH=$PWD/bin:$PATH
-
-# Instalar Istio
 istioctl install --set profile=demo -y
-
-# Etiquetar namespace para inyección automática
 kubectl label namespace default istio-injection=enabled
 ```
 
@@ -221,290 +187,120 @@ chmod +x setup-monitoring.sh
 ./setup-monitoring.sh
 ```
 
-### Acceder a los Dashboards
-
-En **otra terminal** (desde el host), ejecuta:
-
-```bash
-vagrant ssh
-
-# Prometheus (métricas)
-kubectl port-forward -n istio-system svc/prometheus 9090:9090 --address 0.0.0.0
-
-# Grafana (visualización)
-kubectl port-forward -n istio-system svc/grafana 3000:3000 --address 0.0.0.0
-
-# Kiali (service mesh)
-kubectl port-forward -n istio-system svc/kiali 20001:20001 --address 0.0.0.0
-```
-
-Luego accede desde tu navegador:
-- **Prometheus**: http://192.168.100.10:9090
-- **Grafana**: http://192.168.100.10:3000
-- **Kiali**: http://192.168.100.10:20001
+| Dashboard     | Acceso                                                     |
+| ------------- | ---------------------------------------------------------- |
+| 📈 Prometheus | [http://192.168.100.10:9090](http://192.168.100.10:9090)   |
+| 📊 Grafana    | [http://192.168.100.10:3000](http://192.168.100.10:3000)   |
+| 🕸️ Kiali     | [http://192.168.100.10:20001](http://192.168.100.10:20001) |
 
 ---
 
-## 🧪 Probar Tolerancia a Fallos
+## 🧪 Pruebas de Tolerancia a Fallos
 
-### Opción 1: Script Automatizado
+### Script Automático
 
 ```bash
-cd /vagrant
 chmod +x test-fault-tolerance.sh
 ./test-fault-tolerance.sh
 ```
 
-Este script incluye pruebas de:
-1. Self-healing (auto-recuperación)
-2. HPA (escalado automático)
-3. Fallo de base de datos
-4. Circuit breaker
-5. Retry policy
+Incluye pruebas de:
 
-### Opción 2: Chaos Monkey
+* Self-healing
+* Auto-scaling
+* Fallo de base de datos
+* Circuit Breaker
+* Retry policy
+
+### Chaos Monkey
 
 ```bash
-cd /vagrant
 chmod +x chaos-monkey.sh
 ./chaos-monkey.sh
 ```
 
-Este script permite:
-- Eliminar pods aleatoriamente
-- Atacar servicios específicos
-- Modo caos continuo
-- Ver estadísticas del cluster
+Simula:
 
-### Pruebas Manuales
-
-#### Eliminar un Pod (Self-healing)
-```bash
-# Ver pods actuales
-kubectl get pods
-
-# Eliminar un pod
-kubectl delete pod <nombre-del-pod>
-
-# Kubernetes lo recreará automáticamente
-kubectl get pods
-```
-
-#### Escalar Manualmente
-```bash
-# Escalar a 5 réplicas
-kubectl scale deployment users-api --replicas=5
-
-# Verificar
-kubectl get pods -l app=users-api
-```
-
-#### Ver Logs
-```bash
-# Logs de un servicio específico
-kubectl logs -l app=users-api --tail=50
-
-# Seguir logs en tiempo real
-kubectl logs -l app=users-api -f
-```
-
----
-
-## 📈 Configurar Patrones de Tolerancia
-
-### Activar Circuit Breaker
-
-```bash
-kubectl apply -f k8s/base/circuit-breaker.yaml
-```
-
-### Activar Retry Policy
-
-```bash
-kubectl apply -f k8s/base/retry-policy.yaml
-```
-
-### Configurar HPA
-
-```bash
-kubectl apply -f k8s/base/hpa.yaml
-
-# Ver estado del HPA
-kubectl get hpa
-```
-
----
-
-## 🔧 Comandos Útiles
-
-### Información del Cluster
-
-```bash
-# Estado general
-kubectl get all
-
-# Pods con más detalles
-kubectl get pods -o wide
-
-# Describir un pod
-kubectl describe pod <nombre-pod>
-
-# Uso de recursos
-kubectl top nodes
-kubectl top pods
-```
-
-### Debugging
-
-```bash
-# Entrar a un pod
-kubectl exec -it <nombre-pod> -- /bin/bash
-
-# Ver logs con timestamps
-kubectl logs <nombre-pod> --timestamps
-
-# Ver eventos del cluster
-kubectl get events --sort-by='.lastTimestamp'
-```
-
-### Limpieza
-
-```bash
-# Eliminar todos los deployments
-kubectl delete deployment --all
-
-# Eliminar todos los servicios (excepto kubernetes)
-kubectl delete svc --all
-
-# Reiniciar Minikube
-minikube stop
-minikube start
-```
+* Eliminación aleatoria de pods
+* Fallos dirigidos
+* Modos de caos continuo
 
 ---
 
 ## 🐛 Solución de Problemas
 
-### Los pods no inician
+💥 **Pods no inician**
 
 ```bash
-# Ver por qué un pod no inicia
-kubectl describe pod <nombre-pod>
-
-# Ver logs del pod
-kubectl logs <nombre-pod>
-
-# Si es problema de imagen
-eval $(minikube docker-env)
-docker images  # Verificar que las imágenes existen
+kubectl describe pod <nombre>
+kubectl logs <nombre>
 ```
 
-### No puedo acceder a la aplicación
+🔒 **No se puede acceder a la app**
 
 ```bash
-# Verificar servicios
 kubectl get svc
-
-# Verificar que los pods estén Ready
 kubectl get pods
-
-# Probar desde dentro del cluster
-kubectl run -it --rm debug --image=busybox --restart=Never -- wget -O- http://users-api:5002/health
 ```
 
-### MySQL no se conecta
+🗄️ **MySQL no responde**
 
 ```bash
-# Ver logs de MySQL
 kubectl logs -l app=mysql
-
-# Verificar que el PVC esté bound
 kubectl get pvc
-
-# Reiniciar MySQL
-kubectl delete pod -l app=mysql
 ```
 
-### Problemas de recursos
+🔥 **Minikube sin recursos**
 
 ```bash
-# Ver uso de recursos
-kubectl top nodes
-kubectl top pods
-
-# Si Minikube necesita más recursos
-minikube stop
 minikube delete
 minikube start --memory=8192 --cpus=4
 ```
 
 ---
 
-## 📚 Estructura del Proyecto
+## 📂 Estructura del Proyecto
 
 ```
 .
-├── frontend/                 # Aplicación web Flask
-├── microUsers/              # API de usuarios
-├── microProductos/          # API de productos
-├── microOrders/             # API de órdenes
+├── frontend/                 # Interfaz web (Flask)
+├── microUsers/               # API de usuarios
+├── microProductos/           # API de productos
+├── microOrders/              # API de órdenes
 ├── k8s/
-│   ├── base/                # Manifiestos de Kubernetes
-│   ├── monitoring/          # Configuración de monitoreo
-│   └── chaos/               # Experimentos de caos
-├── Vagrantfile              # Configuración de la VM
-├── setup-k8s.sh            # Script de instalación
-├── setup-monitoring.sh      # Script de monitoreo
-├── chaos-monkey.sh          # Script de Chaos Engineering
-└── test-fault-tolerance.sh  # Script de pruebas
+│   ├── base/                 # Manifiestos principales
+│   ├── monitoring/           # Configuración de monitoreo
+│   └── chaos/                # Experimentos de caos
+├── Vagrantfile
+├── setup-k8s.sh
+├── setup-monitoring.sh
+├── chaos-monkey.sh
+└── test-fault-tolerance.sh
 ```
 
 ---
 
-## 🎯 Objetivos Cumplidos
-
-- ✅ Implementación de patrones de tolerancia a fallos
-- ✅ Circuit Breaker con Istio
-- ✅ Retry policies automáticos
-- ✅ Auto-scaling con HPA
-- ✅ Self-healing de pods
-- ✅ Monitoreo con Prometheus y Grafana
-- ✅ Simulación de fallos con Chaos Monkey
-- ✅ Health checks (liveness y readiness)
-
----
-
-## 📞 Soporte
-
-Si encuentras algún problema:
-
-1. Verifica que tu hardware cumple con los requisitos mínimos
-2. Revisa los logs con `kubectl logs`
-3. Usa `kubectl describe` para más detalles
-4. Consulta la sección de solución de problemas
-
----
-
-## 🏁 Comenzar Rápido (TL;DR)
+## 🏁 TL;DR (Inicio Rápido)
 
 ```bash
-# 1. Levantar VM
-vagrant up
-vagrant ssh
-
-# 2. Construir imágenes
+vagrant up && vagrant ssh
 cd /vagrant
 eval $(minikube docker-env)
 docker build -t users-api:latest ./microUsers
 docker build -t products-api:latest ./microProductos
 docker build -t orders-api:latest ./microOrders
 docker build -t frontend:latest ./frontend
-
-# 3. Desplegar
 kubectl apply -f k8s/base/
-
-# 4. Acceder
-# Frontend: http://192.168.100.10:30080
 ```
 
-¡Listo! 🎉
+🎉 **Frontend disponible en:** [http://192.168.100.10:30080](http://192.168.100.10:30080)
+
+---
+
+<div align="center">
+
+💡 *Proyecto desarrollado con ❤️ por estudiantes de Ingeniería Multimedia*
+📬 ¿Tienes dudas o sugerencias? ¡Abre un issue o contribuye al repositorio!
+
+</div>
+```
