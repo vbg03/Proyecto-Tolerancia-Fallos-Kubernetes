@@ -15,5 +15,7 @@ db.init_app(app)
 def health_check():
     return "OK", 200
 
+app.register_blueprint(user_controller)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)
