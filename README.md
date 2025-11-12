@@ -506,3 +506,9 @@ kubectl apply -f k8s/base/
 # 4. Acceder
 # Frontend: http://192.168.100.10:30080
 ```
+
+## Realizado por:
+- Sebastian Becerra Arias
+- Valeria Bowers Gutierrez
+- Simón Colonia Amador
+- Johan Sebastian Quimbayo Azcarate
